@@ -284,7 +284,7 @@
 const EXERCISES_A = [
   { name: 'Seated Chest Press',       rec: '3 × 10–12', equip: 'Matrix chest press machine' },
   { name: 'Dumbbell Shoulder Press',  rec: '3 × 10–12', equip: 'Dumbbells + bench' },
-  { name: 'Smith Machine Upright Row', rec: '3 × 12–15', equip: 'Smith machine (narrow grip, pull bar to chin, elbows flared) · <a href="https://www.youtube.com/watch?v=2T4YqU6KluM" target="_blank" style="color:var(--orange)">▶ Watch tutorial</a>' },
+  { name: 'Smith Machine Upright Row', rec: '3 × 12–15', equip: 'Smith machine (narrow grip, pull bar to chin, elbows flared)', video: 'https://www.youtube.com/watch?v=2T4YqU6KluM' },
   { name: 'Tricep Pushdown',          rec: '3 × 12–15', equip: 'Dual cable machine — high pulley + rope' },
   { name: 'Smith Machine Incline Press', rec: '3 × 8–10', equip: 'Smith machine + bench (incline)' },
 ];
@@ -560,7 +560,7 @@ function renderDetails() {
       ${g.exercises.map(ex => `
         <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)">
           <div style="font-size:14px;font-weight:700;margin-bottom:2px">${ex.name}</div>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">🏋️ ${ex.equip}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">🏋️ ${ex.equip}${ex.video ? ` · <a href="${ex.video}" target="_blank" style="color:var(--orange);text-decoration:none">▶ Watch tutorial<\/a>` : ''}</div>
           <input
             type="text"
             class="details-note-input"
@@ -700,5 +700,4 @@ if ('serviceWorker' in navigator) {
     self.addEventListener('install', e => { self.skipWaiting(); });
     self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });
   `;
-  const blob = new Blob([sw], { type: 'application/javascript' });
-  navigator.service
+  const blob = new Bl
