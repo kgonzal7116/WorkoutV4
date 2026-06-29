@@ -550,36 +550,60 @@ function renderStats() {
 // ── Details ───────────────────────────────────────────
 function renderDetails() {
   const container = document.getElementById('details-list');
+  container.innerHTML = '';
   const groups = [
     { label: 'Workout A — Push', exercises: EXERCISES_A },
     { label: 'Workout B — Pull', exercises: EXERCISES_B },
   ];
-  container.innerHTML = groups.map(g => `
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-title">${g.label}</div>
-      ${g.exercises.map(ex => `
-        <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)">
-          <div style="font-size:14px;font-weight:700;margin-bottom:2px">${ex.name}</div>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">🏋️ ${ex.equip}${ex.video ? ` · <a href="${ex.video}" target="_blank" style="color:var(--orange);text-decoration:none">▶ Watch tutorial<\/a>` : ''}</div>
-          <input
-            type="text"
-            class="details-note-input"
-            data-ex="${ex.name}"
-            placeholder="Add a note (e.g. seat at pos 3, start at 40 lbs)..."
-            value="${(exNotes[ex.name] || '').replace(/"/g, '&quot;')}"
-            oninput="saveExNote('${ex.name.replace(/'/g,"\\'")}', this.value)"
-            style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:#fafafa;outline:none;transition:border-color 0.15s"
-            onfocus="this.style.borderColor='var(--orange)'"
-            onblur="this.style.borderColor='var(--border)'"
-          >
-        </div>
-      `).join('').replace(/<\/div>\s*$/, '</div>').replace(/border-bottom:1px solid var\(--border\)">\s*$/, 'border-bottom:none">')}
-    </div>
-  `).join('');
-  // Remove border from last item in each group
-  container.querySelectorAll('.card').forEach(card => {
-    const items = card.querySelectorAll('[style*="border-bottom"]');
-    if (items.length) items[items.length - 1].style.borderBottom = 'none';
+  groups.forEach(function(g) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.marginBottom = '14px';
+
+    const title = document.createElement('div');
+    title.className = 'card-title';
+    title.textContent = g.label;
+    card.appendChild(title);
+
+    g.exercises.forEach(function(ex, idx) {
+      const row = document.createElement('div');
+      row.style.cssText = 'margin-bottom:14px;padding-bottom:14px;' + (idx < g.exercises.length - 1 ? 'border-bottom:1px solid var(--border)' : '');
+
+      const name = document.createElement('div');
+      name.style.cssText = 'font-size:14px;font-weight:700;margin-bottom:2px';
+      name.textContent = ex.name;
+      row.appendChild(name);
+
+      const equip = document.createElement('div');
+      equip.style.cssText = 'font-size:12px;color:var(--muted);margin-bottom:8px';
+      equip.textContent = '🏋️ ' + ex.equip;
+      if (ex.video) {
+        const sep = document.createTextNode(' · ');
+        const link = document.createElement('a');
+        link.href = ex.video;
+        link.target = '_blank';
+        link.style.cssText = 'color:var(--orange);text-decoration:none';
+        link.textContent = '▶ Watch tutorial';
+        equip.appendChild(sep);
+        equip.appendChild(link);
+      }
+      row.appendChild(equip);
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'details-note-input';
+      input.placeholder = 'Add a note (e.g. seat at pos 3, start at 40 lbs)...';
+      input.value = exNotes[ex.name] || '';
+      input.style.cssText = 'width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:#fafafa;outline:none;transition:border-color 0.15s';
+      input.addEventListener('focus', function() { this.style.borderColor = 'var(--orange)'; });
+      input.addEventListener('blur', function() { this.style.borderColor = 'var(--border)'; });
+      input.addEventListener('input', function() { saveExNote(ex.name, this.value); });
+      row.appendChild(input);
+
+      card.appendChild(row);
+    });
+
+    container.appendChild(card);
   });
 }
 
@@ -689,15 +713,26 @@ function calSelectDay(dateStr) {
       ${chips ? `<div class="chip-grid" style="margin-top:8px">${chips}</div>` : ''}
       ${s.notes ? `<div class="entry-notes" style="margin-top:10px">${s.notes}</div>` : ''}
     </div>`;
-  }).join('');
+    }).join('');
 }
 // ── End Calendar ──────────────────────────────────────
 
 // Register inline service worker for offline support
 if ('serviceWorker' in navigator) {
-  const sw = `
-    const CACHE = 'workout-log-v1';
-    self.addEventListener('install', e => { self.skipWaiting(); });
-    self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });
-  `;
-  const blob = new Bl
+  const sw = [
+    "const CACHE = 'workout-log-v1';",
+    "self.addEventListener('install', e => { self.skipWaiting(); });",
+    "self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });"
+  ].join('\n');
+  const blob = new Blob([sw], { type: 'application/javascript' });
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(function(){});
+}
+
+// Init
+calInit();
+setDefaultDate();
+buildExerciseFields();
+save();
+</script>
+</body>
+</html>
