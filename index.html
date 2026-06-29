@@ -284,13 +284,13 @@
 const EXERCISES_A = [
   { name: 'Seated Chest Press',       rec: '3 × 10–12', equip: 'Matrix chest press machine' },
   { name: 'Dumbbell Shoulder Press',  rec: '3 × 10–12', equip: 'Dumbbells + bench' },
-  { name: 'Cable Lateral Raise',      rec: '3 × 12–15', equip: 'Dual cable machine — low pulley' },
+  { name: 'Smith Machine Upright Row', rec: '3 × 12–15', equip: 'Smith machine (narrow grip, pull bar to chin, elbows flared) · <a href="https://www.youtube.com/watch?v=2T4YqU6KluM" target="_blank" style="color:var(--orange)">▶ Watch tutorial</a>' },
   { name: 'Tricep Pushdown',          rec: '3 × 12–15', equip: 'Dual cable machine — high pulley + rope' },
   { name: 'Smith Machine Incline Press', rec: '3 × 8–10', equip: 'Smith machine + bench (incline)' },
 ];
 const EXERCISES_B = [
   { name: 'Lat Pulldown',        rec: '3 × 10–12', equip: 'Matrix lat pulldown machine' },
-  { name: 'Seated Cable Row',    rec: '3 × 10–12', equip: 'Matrix seated row machine' },
+  { name: 'Functional Trainer Row',  rec: '3 × 10–12', equip: 'Functional trainer — mid pulley (stand back, pull both handles to waist)' },
   { name: 'Cable Face Pull',     rec: '3 × 12–15', equip: 'Dual cable machine — high pulley + rope' },
   { name: 'Dumbbell Bicep Curl', rec: '3 × 10–12', equip: 'Dumbbells' },
   { name: 'Smith Machine Bent-Over Row', rec: '3 × 10–12', equip: 'Smith machine (hinge forward, pull bar to waist)' },
@@ -701,14 +701,4 @@ if ('serviceWorker' in navigator) {
     self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });
   `;
   const blob = new Blob([sw], { type: 'application/javascript' });
-  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
-}
-
-// Init
-calInit();
-setDefaultDate();
-buildExerciseFields();
-save();
-</script>
-</body>
-</html>
+  navigator.service
